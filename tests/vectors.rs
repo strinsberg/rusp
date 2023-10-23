@@ -56,3 +56,38 @@ fn test_vector_info() {
     eval_assert("(length [])", "0");
     eval_assert("(length [1 2 3 4])", "4");
 }
+
+#[test]
+fn test_vector_conversion() {
+    eval_assert("(vector->tuple [1 2 3 4])", "#[1 2 3 4]");
+    eval_assert("(tuple->vector #[1 2 3 4])", "[1 2 3 4]");
+    eval_assert("(let* [(v [1 2 3 4])
+                        (t (vector->tuple v))]
+                    (push v 5)
+                    #(v t))",
+                "([1 2 3 4 5] #[1 2 3 4])");
+    eval_assert("(let* [(t #[1 2 3 4])
+                        (v (tuple->vector t))]
+                    (push v 5)
+                    #(v t))",
+                "([1 2 3 4 5] #[1 2 3 4])");
+    eval_assert("(let [(v [1 2 3 4])]
+                    (vector-freeze v)
+                    (tuple? v))",
+                "#t");
+}
+
+
+// Had some issues above returning [v t] as a vector literal. It returned
+// [v t] instead of [[1 2 3 4 5] #[1 2 3 4]]. These are to test to make sure
+// that in this context, and perhaps others, that literal vectors are being
+// evaluated properly.
+#[test]
+fn test_collection_lit_with_symbols_in_let() {
+    eval_assert("(let [(a 4) (b 6)] #(a b))", "(4 6)");
+    eval_assert("(let* [(a 4) (b a)] a b #(a b))", "(4 4)");
+    eval_assert("(let [(a 4) (b 6)] [a b])", "[4 6]");
+    eval_assert("(let* [(a 4) (b a)] a b [a b])", "[4 4]");
+    eval_assert("(let [(a 4) (b 6)] #[a b])", "#[4 6]");
+    eval_assert("(let* [(a 4) (b a)] a b #[a b])", "#[4 4]");
+}

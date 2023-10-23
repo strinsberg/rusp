@@ -71,6 +71,27 @@ impl Vm {
                     Val::Macro(m) => m.expand(expr, env.clone())?,
                     head => return Err(Error::NotAProcedure(head)),
                 },
+                // TODO do we really want to eval a vector when we see it? or
+                // do we want to eval vector literals when we see them only.
+                // Is it even possible to eval it twice without being explicit
+                // about it?
+                // The reader transforms #(1 2 3) -> (list 1 2 3) which is why
+                // those are evaluated properly. We could do that to ensure
+                // vector literals are evalled properly when seen in code, but that
+                // if encountered other ways are simply returned. I guess the
+                // question is whether there is supposed to be a difference
+                // between (vector ...) and [...]
+                Val::Vector(v) => {
+                        let evalled = v.borrow().values()
+                        .map(|val| self.eval(val.clone(), env.clone()))
+                        .collect::<Result<Vec<Val>, Error>>()?;
+                    if v.borrow().is_tuple() {
+                        Val::from(Vector::tuple(evalled))
+                    } else {
+                        Val::from(Vector::from(evalled))
+                    }
+                }
+                // TODO add an eval for map literals
                 Val::TailCall(_) | Val::Undefined => panic!("should not be evaluated: {expr}"),
                 _ => expr,
             };

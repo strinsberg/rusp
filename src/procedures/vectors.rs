@@ -32,6 +32,50 @@ pub fn pop(args: &[Val]) -> Result<Val, Error> {
     }
 }
 
+// Conversion //
+
+pub fn vector_to_tuple(args: &[Val]) -> Result<Val, Error> {
+    match args.len() {
+        1 => match args[0].clone() {
+            Val::Vector(v) if !v.borrow().is_tuple() => {
+                Ok(Val::from(Vector::copy_to_tuple(&*v.borrow())))
+            },
+            Val::Vector(v) if v.borrow().is_tuple() => Ok(args[0].clone()),
+            _ => Err(Error::ArgType("vector->tuple", "vector/tuple", args[0].clone())),
+        },
+        _ => Err(Error::Arity("vector->tuple")),
+    }
+}
+
+pub fn tuple_to_vector(args: &[Val]) -> Result<Val, Error> {
+    match args.len() {
+        1 => match args[0].clone() {
+            Val::Vector(v) if v.borrow().is_tuple() => {
+                Ok(Val::from(Vector::copy_to_vec(&*v.borrow())))
+            },
+            _ => Err(Error::ArgType("tuple->vector", "tuple", args[0].clone())),
+        },
+        _ => Err(Error::Arity("tuple->vector")),
+    }
+}
+
+// TODO make this a collections generic method since it will work for both
+// Vectors and Maps and if it is called on a list or tuple or dict it does
+// not really make a difference.
+pub fn vector_freeze(args: &[Val]) -> Result<Val, Error> {
+    match args.len() {
+        1 => match args[0].clone() {
+            Val::Vector(v) if !v.borrow().is_tuple() => {
+                v.borrow_mut().freeze();
+                Ok(args[0].clone())
+            },
+            _ => Err(Error::ArgType("tuple->vector", "tuple", args[0].clone())),
+        },
+        _ => Err(Error::Arity("tuple->vector")),
+    }
+}
+
+        
 // Predicates //
 
 pub fn is_vector(args: &[Val]) -> Result<Val, Error> {

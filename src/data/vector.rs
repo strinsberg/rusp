@@ -32,14 +32,14 @@ impl Vector {
         }
     }
 
-    pub fn copy_to_tuple(vec: Vector) -> Vector {
+    pub fn copy_to_tuple(vec: &Vector) -> Vector {
         Vector {
             mutable: false,
             vals: vec.vals.clone(),
         }
     }
 
-    pub fn copy_to_vec(vec: Vector) -> Vector {
+    pub fn copy_to_vec(vec: &Vector) -> Vector {
         Vector {
             mutable: true,
             vals: vec.vals.clone(),
@@ -82,6 +82,10 @@ impl Vector {
             self.vals.pop();
             Ok(())
         }
+    }
+
+    pub fn freeze(&mut self) {
+        self.mutable = false;
     }
 
     pub fn fill(&mut self, val: Val) -> Result<(), Error> {
