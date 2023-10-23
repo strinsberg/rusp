@@ -20,8 +20,8 @@ pub const RUSP_LIB_STD: &str = r#";; Derived Expressions ;;;;;;;;;;;;;;;;;;;;;;;
   [(or) #f]
   [(or test) test]
   [(or test test* ...)
-   (let [(x test)]
-     (if x x (or test* ...)))])
+   (let [(!!-or-x-!! test)]
+     (if !!-or-x-!! !!-or-x-!! (or test* ...)))])
 
 ;; Booleans ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

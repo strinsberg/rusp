@@ -99,7 +99,7 @@ impl Template {
                     }
                     None => {
                         if *s != name && !self.reserved(s.clone()) {
-                            let sym = Rc::new(Str::from(format!("{s}!!macro!!rename").as_str()));
+                            let sym = Rc::new(Str::from(format!("{s}").as_str()));
                             Ok(Val::Symbol(sym))
                         } else {
                             Ok(Val::Symbol(s.clone()))
@@ -240,7 +240,7 @@ mod tests {
                 Val::symbol("f"),
                 Val::list_from_vec(&vec![Val::from(10)]),
                 Val::from(99),
-                Val::symbol("c!!macro!!rename"),
+                Val::symbol("c"),
             ]))
         );
     }
@@ -275,7 +275,7 @@ mod tests {
                 Val::symbol("f"),
                 Val::list_from_vec(&vec![Val::from(10), Val::from(11), Val::from(12)]),
                 Val::from(99),
-                Val::symbol("c!!macro!!rename"),
+                Val::symbol("c"),
             ]))
         );
     }
@@ -310,7 +310,7 @@ mod tests {
                 Val::symbol("f"),
                 Val::from(vec![Val::from(10), Val::from(11), Val::from(12)]),
                 Val::from(99),
-                Val::symbol("c!!macro!!rename"),
+                Val::symbol("c"),
             ]))
         );
     }
