@@ -40,7 +40,7 @@ impl Vm {
     }
 
     pub fn eval_top_level(&mut self, form: Val) -> Result<Val, Error> {
-        println!("{form}");
+        //println!("{form}");
         match form {
             Val::List(ref ls) => match ls.head() {
                 Val::Symbol(s) if s.is("def") => self.eval_define(ls.tail()),

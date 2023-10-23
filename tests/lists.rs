@@ -16,6 +16,8 @@ fn test_list_predicates() {
     eval_assert("(list? #(1 2 3 4))", "#t");
     eval_assert("(null? #())", "#t");
     eval_assert("(null? #(1 2 3 4))", "#f");
+    eval_assert("(empty? #())", "#t");
+    eval_assert("(empty? #(1 2 3 4))", "#f");
 }
 
 #[test]
@@ -41,9 +43,7 @@ fn test_simple_list_access() {
 }
 
 #[test]
-fn test_information() {
+fn test_list_info() {
     eval_assert("(length #())", "0");
     eval_assert("(length #(1 2 3 4))", "4");
-    eval_assert("(empty? #())", "#t");
-    eval_assert("(empty? #(1 2 3 4))", "#f");
 }

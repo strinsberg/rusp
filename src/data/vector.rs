@@ -104,6 +104,10 @@ impl Vector {
     pub fn len(&self) -> usize {
         self.vals.len()
     }
+
+    pub fn is_tuple(&self) -> bool {
+        !self.mutable
+    }
 }
 
 // Traits /////////////////////////////////////////////////////////////////////

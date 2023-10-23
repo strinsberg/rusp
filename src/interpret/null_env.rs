@@ -15,6 +15,12 @@ pub fn null_env() -> Environ {
         // works on multiple collection types
         new_proc("nth", procedures::collections::nth),
         new_proc("length", procedures::collections::length),
+        // vectors
+        new_proc("vector", procedures::vectors::vector),
+        new_proc("push", procedures::vectors::push),
+        new_proc("pop", procedures::vectors::pop),
+        new_proc("vector?", procedures::vectors::is_vector),
+        new_proc("tuple?", procedures::vectors::is_tuple),
         // math/numbers
         new_proc("number?", procedures::math::is_number),
         new_proc("float?", procedures::math::is_float),

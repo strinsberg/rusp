@@ -139,7 +139,7 @@ impl Pattern {
         captures: Environ,
         env: Environ,
     ) -> Option<Environ> {
-        println!("{:?}", vals);
+        //println!("{:?}", vals);
         let mut captures = captures;
         // match patterns
         for (i, p) in patterns.iter().enumerate() {

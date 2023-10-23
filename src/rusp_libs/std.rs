@@ -16,12 +16,19 @@ pub const RUSP_LIB_STD: &str = r#";; Derived Expressions ;;;;;;;;;;;;;;;;;;;;;;;
   [(and test test* ...)
    (if test (and test* ...) #f)])
 
+;; Note for macros that create bindings like this naming needs to be
+;; very specific so that it will not clash with variables defined in
+;; the outside environment. For example, if we use x below then non-negative?
+;; will not work as it binds x and x in the or expansion will refer to it
+;; rather than the desired x. This is a problem with macros right now and they
+;; require a rewrite.
 (macro-rules or []
   [(or) #f]
   [(or test) test]
   [(or test test* ...)
    (let [(!!-or-x-!! test)]
      (if !!-or-x-!! !!-or-x-!! (or test* ...)))])
+
 
 ;; Booleans ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -54,7 +54,7 @@ impl Val {
 
     pub fn is_true(&self) -> bool {
         match self {
-            Val::Bool(false) => false,
+            Val::Bool(false) | Val::None => false,
             _ => true,
         }
     }

@@ -17,7 +17,21 @@ fn test_let_star_macro() {
 }
 
 #[test]
-#[ignore]
+fn test_and_macro() {
+    eval_assert("and", "#<macro and>");
+    eval_assert("(and)", "#t");
+    eval_assert("(and #t)", "#t");
+    eval_assert("(and #f)", "#f");
+    eval_assert("(and (= 1 1) #f)", "#f");
+    eval_assert("(and #f (= 1 1))", "#f");
+    eval_assert("(and #t 10 #t)", "#t");
+    eval_assert("(and #t #t #())", "#()");
+    eval_assert("(and #t #none #t)", "#f");
+    eval_assert("(and #t #t #none)", "#none");
+    eval_assert("(and #t #t #f)", "#f");
+}
+
+#[test]
 fn test_or_macro() {
     eval_assert("or", "#<macro or>");
     eval_assert("(or)", "#f");
@@ -27,6 +41,6 @@ fn test_or_macro() {
     eval_assert("(or #f (= 1 1))", "#t");
     eval_assert("(or #f 10 #f)", "10");
     eval_assert("(or #f #f #())", "#()");
-    eval_assert("(or #f #none #f)", "#none");
+    eval_assert("(or #f #none #f)", "#f");
     eval_assert("(or #f #f #f)", "#f");
 }

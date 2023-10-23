@@ -90,11 +90,11 @@ impl Template {
         match self {
             Template::Atom(val) => Ok(val.clone()),
             Template::Var(s) => {
-                println!("{name} {s}");
+                //println!("{name} {s}");
                 let name = Rc::new(Str::from(format!("{s}!!0").as_str()));
                 match captures.lookup(&name) {
                     Some(val) => {
-                        println!("{val}");
+                        //println!("{val}");
                         Ok(val)
                     }
                     None => {
