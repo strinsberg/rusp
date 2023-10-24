@@ -21,7 +21,7 @@ impl Vector {
     pub fn tuple(vals: Vec<Val>) -> Vector {
         Vector {
             mutable: false,
-            vals: vals,
+            vals,
         }
     }
 

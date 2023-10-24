@@ -63,14 +63,18 @@ fn test_tuple_access() {
 
 #[test]
 fn test_vector_mutation() {
-    eval_assert("(let [(v [1 2 3 4])]
+    eval_assert(
+        "(let [(v [1 2 3 4])]
                    (push v 5)
                    (= (length v) 5))",
-                "#t");
-    eval_assert("(let [(v [1 2 3 4])]
+        "#t",
+    );
+    eval_assert(
+        "(let [(v [1 2 3 4])]
                    (pop v)
                    (= (length v) 3))",
-                "#t");
+        "#t",
+    );
     // TODO Uncomment when we have better errors
     // eval_assert("(push #[1 2 3] 4)", "error");
     // eval_assert("(pop #[1 2 3])", "error");
@@ -90,24 +94,28 @@ fn test_vector_info() {
 fn test_vector_conversion() {
     eval_assert("(vector->tuple [1 2 3 4])", "#[1 2 3 4]");
     eval_assert("(tuple->vector #[1 2 3 4])", "[1 2 3 4]");
-    eval_assert("(let* [(v [1 2 3 4])
+    eval_assert(
+        "(let* [(v [1 2 3 4])
                         (t (vector->tuple v))]
                     (push v 5)
                     #(v t))",
-                "([1 2 3 4 5] #[1 2 3 4])");
-    eval_assert("(let* [(t #[1 2 3 4])
+        "([1 2 3 4 5] #[1 2 3 4])",
+    );
+    eval_assert(
+        "(let* [(t #[1 2 3 4])
                         (v (tuple->vector t))]
                     (push v 5)
                     #(v t))",
-                "([1 2 3 4 5] #[1 2 3 4])");
-    eval_assert("(let [(v [1 2 3 4])]
+        "([1 2 3 4 5] #[1 2 3 4])",
+    );
+    eval_assert(
+        "(let [(v [1 2 3 4])]
                     (vector-freeze v)
                     (tuple? v))",
-                "#t");
-
+        "#t",
+    );
     // TODO vector->list
 }
-
 
 // Had some issues above returning [v t] as a vector literal. It returned
 // [v t] instead of [[1 2 3 4 5] #[1 2 3 4]]. These are to test to make sure
