@@ -80,7 +80,6 @@ fn test_vector_mutation() {
     // eval_assert("(push! #[1 2 3] 4)", "error");
     // eval_assert("(pop! #[1 2 3])", "error");
 
-    // TODO set-nth!, vector-fill!
     eval_assert("(let [(v [1 2 3 4])] (set-nth! v 3 8))", "[1 2 3 8]");
     eval_assert("(let [(v [1 2 3 4])] (fill! v 99))", "[99 99 99 99]");
 }
