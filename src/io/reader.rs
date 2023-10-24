@@ -49,6 +49,7 @@ impl StringReader {
             Token::TupleOpen => self.read_tuple_val(),
             Token::MapOpen => self.read_map_val(),
             Token::DictOpen => self.read_dict_val(),
+            Token::Deref => self.read_deref(),
             Token::None => Ok(Val::None),
             tk => Err(Error::BadToken(self.scanner.line, tk.to_string())),
         }
@@ -135,6 +136,23 @@ impl StringReader {
             map.assoc(self.read_helper(key)?, self.read_helper(val)?)?;
         }
         Ok(map)
+    }
+
+    // TODO could use this as a reference for how to make [] etc syntactic
+    // sugar instead of separate forms. I.e. so that when we read and evaluate
+    // them we do not need to have a separate eval rule for collection
+    // evaluation for each collection.
+    fn read_deref(&mut self) -> Result<Val, Error> {
+        // @ was used by caller
+        let ident = self.scanner.next()?;
+        // is syntactic sugar for (deref identifier)
+        match ident {
+            Token::Identifier(id) => Ok(Val::list_from_vec(&vec![
+                Val::symbol("deref"),
+                Val::Symbol(Rc::new(id)),
+            ])),
+            _ => Err(Error::DerefNotIdent(ident.to_string())),
+        }
     }
 }
 

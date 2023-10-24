@@ -10,8 +10,8 @@ fn test_vector_construction() {
     eval_assert("#[1 2 3 4]", "#[1 2 3 4]");
     eval_assert("[1 2 (= 1 2)]", "[1 2 #f]");
     eval_assert("#[1 2 (= 1 2)]", "#[1 2 #f]");
-    eval_assert("(push [1 2 3] 4)", "[1 2 3 4]");
-    eval_assert("(pop [1 2 3 4])", "[1 2 3]");
+    eval_assert("(push! [1 2 3] 4)", "[1 2 3 4]");
+    eval_assert("(pop! [1 2 3 4])", "[1 2 3]");
 }
 
 #[test]
@@ -65,19 +65,19 @@ fn test_tuple_access() {
 fn test_vector_mutation() {
     eval_assert(
         "(let [(v [1 2 3 4])]
-                   (push v 5)
+                   (push! v 5)
                    (= (length v) 5))",
         "#t",
     );
     eval_assert(
         "(let [(v [1 2 3 4])]
-                   (pop v)
+                   (pop! v)
                    (= (length v) 3))",
         "#t",
     );
     // TODO Uncomment when we have better errors
-    // eval_assert("(push #[1 2 3] 4)", "error");
-    // eval_assert("(pop #[1 2 3])", "error");
+    // eval_assert("(push! #[1 2 3] 4)", "error");
+    // eval_assert("(pop! #[1 2 3])", "error");
 
     // TODO set-nth!, vector-fill!
 }
@@ -97,20 +97,20 @@ fn test_vector_conversion() {
     eval_assert(
         "(let* [(v [1 2 3 4])
                         (t (vector->tuple v))]
-                    (push v 5)
+                    (push! v 5)
                     #(v t))",
         "([1 2 3 4 5] #[1 2 3 4])",
     );
     eval_assert(
         "(let* [(t #[1 2 3 4])
                         (v (tuple->vector t))]
-                    (push v 5)
+                    (push! v 5)
                     #(v t))",
         "([1 2 3 4 5] #[1 2 3 4])",
     );
     eval_assert(
         "(let [(v [1 2 3 4])]
-                    (vector-freeze v)
+                    (vector-freeze! v)
                     (tuple? v))",
         "#t",
     );

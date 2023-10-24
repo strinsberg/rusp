@@ -73,3 +73,22 @@ pub fn greater_than(args: &[Val]) -> Result<Val, Error> {
         _ => Err(Error::Arity(">")),
     }
 }
+
+// Arithmetic //
+
+pub fn add(left: &Val, right: &Val) -> Result<Val, Error> {
+    match (left, right) {
+        (Val::Number(l), Val::Number(r)) => Ok(Val::Number(l.add(r)?)),
+        (Val::Number(_), v) => Err(Error::ArgType("add", "number", v.clone())),
+        (v, Val::Number(_)) => Err(Error::ArgType("add", "number", v.clone())),
+        _ => Err(Error::ArgType(
+            "add",
+            "number",
+            Val::from(vec![left.clone(), right.clone()]),
+        )),
+    }
+}
+
+pub fn sum(args: &[Val]) -> Result<Val, Error> {
+    args.iter().fold(Ok(Val::from(0)), |acc, x| add(&acc?, x))
+}

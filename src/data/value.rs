@@ -18,7 +18,7 @@ pub enum Val {
     Closure(Rc<Closure>),
     Lambda(Rc<Lambda>),
     Macro(Rc<Macro>),
-    // Var(Rc<RefCell<Val>>), // To serve as something like clojures atom
+    Var(Rc<RefCell<Val>>), // To serve as something like clojures atom
     Empty,
     None,
     // not available to user
@@ -49,6 +49,10 @@ impl Val {
 
     pub fn tail_call(env: Environ, expr: Val) -> Val {
         Val::TailCall(Rc::new(TailCall::new(env, expr)))
+    }
+
+    pub fn var(val: Val) -> Val {
+        Val::Var(Rc::new(RefCell::new(val)))
     }
 
     // Predicates //
@@ -201,6 +205,7 @@ impl DisplayRep for Val {
             Val::Closure(c) => c.to_display(),
             Val::Macro(m) => m.to_display(),
             Val::TailCall(t) => t.to_display(),
+            Val::Var(s) => format!("#<var {}>", s.borrow().to_display()).to_string(),
             Val::Empty => "#()".to_string(),
             Val::None => "#none".to_string(),
             Val::Undefined => "#<undefined>".to_string(),
@@ -225,9 +230,10 @@ impl ExternalRep for Val {
             Val::Closure(c) => c.to_external(),
             Val::Macro(m) => m.to_external(),
             Val::TailCall(t) => t.to_external(),
-            Val::Empty => "#()".to_string(),
-            Val::None => "#none".to_string(),
-            Val::Undefined => "#<undefined>".to_string(),
+            Val::Var(s) => format!("#<var {}>", s.borrow().to_external()).to_string(),
+            Val::Empty => self.to_display(),
+            Val::None => self.to_display(),
+            Val::Undefined => self.to_display(),
         }
     }
 }

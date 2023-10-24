@@ -41,6 +41,7 @@ pub enum Error {
     BadEscape(usize, String),
     BadNumber(usize, String),
     MultiLineString(usize),
+    DerefNotIdent(String),
     OddMapPairs(usize),
     BadRule(Val),
     BadPattern(Val),

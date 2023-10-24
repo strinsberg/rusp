@@ -46,3 +46,16 @@ fn test_number_comparisson_predicates() {
     eval_assert("(negative? -1/8)", "#t");
     eval_assert("(negative? 0)", "#f");
 }
+
+#[test]
+fn test_arithmetic() {
+    // Does not need to be a full test of each possible combination, as this
+    // is done in number.rs. However, it cannot hurt to run tests for a function
+    // here to ensure that common uses and possible edge cases are respected.
+    // add/sum
+    eval_assert("(+)", "0");
+    eval_assert("(+ 5)", "5");
+    eval_assert("(+ 1 2 3 4 5)", "15");
+    eval_assert("(+ 1 2 3.1 4 5)", "15.1");
+    eval_assert("(+ 1/2 1/4)", "3/4");
+}

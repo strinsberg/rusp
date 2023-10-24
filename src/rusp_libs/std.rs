@@ -54,4 +54,16 @@ pub const RUSP_LIB_STD: &str = r#";; Derived Expressions ;;;;;;;;;;;;;;;;;;;;;;;
 (def negative? (lambda [x] (and (number? x) (< x 0))))
 (def non-negative? (lambda [x] (or (zero? x) (positive? x))))
 
-"#;
+(def inc (lambda [x] (+ x 1)))
+
+;; Vars ;;;;
+
+(def swap! (lambda [x v]
+             (let [(a (deref x))]
+               (set! x v)
+               a)))
+
+(def update! (lambda [x f]
+             (let [(a (deref x))]
+               (set! x (f a))
+               a)))"#;

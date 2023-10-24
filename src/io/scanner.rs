@@ -11,6 +11,7 @@ use std::fmt;
 // " starts a string
 //   \t, \n, \0, \\, \" are the only escape sequences
 // # starts special constructs and is not allowed at the start of identifiers otherwise
+// @ is for deref
 //
 // ( is a function application
 // #( is a list literal like (list ...)
@@ -45,6 +46,7 @@ pub enum Token {
     MapOpen,
     MapClose,
     DictOpen,
+    Deref,
     None,
     EOF,
 }
@@ -67,6 +69,7 @@ impl fmt::Display for Token {
             Token::MapOpen => write!(f, "{{"),
             Token::MapClose => write!(f, "}}"),
             Token::DictOpen => write!(f, "#{{"),
+            Token::Deref => write!(f, "@"),
             Token::None => write!(f, "#none"),
             Token::EOF => write!(f, "EOF"),
         }
@@ -116,6 +119,7 @@ impl Scanner {
                 self.next()
             }
             '#' => self.scan_hash(),
+            '@' => Ok(Token::Deref),
             '\\' => self.scan_char(),
             ':' => self.scan_keyword(),
             '"' => self.scan_string(),

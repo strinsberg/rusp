@@ -18,13 +18,13 @@ pub fn null_env() -> Environ {
         // vectors
         new_proc("vector", procedures::vectors::vector),
         new_proc("tuple", procedures::vectors::tuple),
-        new_proc("push", procedures::vectors::push),
-        new_proc("pop", procedures::vectors::pop),
+        new_proc("push!", procedures::vectors::push),
+        new_proc("pop!", procedures::vectors::pop),
         new_proc("vector?", procedures::vectors::is_vector),
         new_proc("tuple?", procedures::vectors::is_tuple),
         new_proc("vector->tuple", procedures::vectors::vector_to_tuple),
         new_proc("tuple->vector", procedures::vectors::tuple_to_vector),
-        new_proc("vector-freeze", procedures::vectors::vector_freeze),
+        new_proc("vector-freeze!", procedures::vectors::vector_freeze),
         // math/numbers
         new_proc("number?", procedures::math::is_number),
         new_proc("float?", procedures::math::is_float),
@@ -33,8 +33,13 @@ pub fn null_env() -> Environ {
         new_proc("=", procedures::math::equals),
         new_proc("<", procedures::math::less_than),
         new_proc(">", procedures::math::greater_than),
+        new_proc("+", procedures::math::sum),
         // errors
         new_proc("throw", procedures::errors::throw),
+        // vars
+        new_proc("var", procedures::vars::var),
+        new_proc("deref", procedures::vars::deref),
+        new_proc("set!", procedures::vars::set),
     ]);
     Rc::new(env)
 }
