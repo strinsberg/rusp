@@ -73,7 +73,7 @@ impl Macro {
                 return rule.template.expand(self.name.clone(), captures);
             }
         }
-        Err(Error::NoMacroMatch)
+        Err(Error::NoMacroMatch(self.name.to_string()))
     }
 }
 
@@ -164,7 +164,10 @@ mod tests {
 
         let pat3 = Val::list_from_vec(&vec![Val::symbol("u"), Val::from(10), Val::from(11)]);
         let mac = Macro::new(name.clone(), &vec![], Rc::new(rules.clone())).unwrap();
-        assert_eq!(mac.expand(pat3, env.clone()), Err(Error::NoMacroMatch));
+        assert_eq!(
+            mac.expand(pat3, env.clone()),
+            Err(Error::NoMacroMatch("f".to_string()))
+        );
     }
 
     #[test]

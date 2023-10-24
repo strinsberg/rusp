@@ -46,7 +46,7 @@ pub enum Error {
     BadPattern(Val),
     BadTemplate(Val),
     TemplateElipseNotVar,
-    NoMacroMatch,
+    NoMacroMatch(String),
     Throw(Val, Val, Vec<Val>),
 }
 

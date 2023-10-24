@@ -18,6 +18,7 @@ pub enum Val {
     Closure(Rc<Closure>),
     Lambda(Rc<Lambda>),
     Macro(Rc<Macro>),
+    // Var(Rc<RefCell<Val>>), // To serve as something like clojures atom
     Empty,
     None,
     // not available to user
