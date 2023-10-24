@@ -3,7 +3,6 @@ use helpers::eval_assert;
 
 #[test]
 fn test_vector_construction() {
-    // TODO new-vector (or something like that)
     eval_assert("(vector 1 2 3 4)", "[1 2 3 4]");
     eval_assert("(tuple 1 2 3 4)", "#[1 2 3 4]");
     eval_assert("[1 2 3 4]", "[1 2 3 4]");
@@ -12,6 +11,8 @@ fn test_vector_construction() {
     eval_assert("#[1 2 (= 1 2)]", "#[1 2 #f]");
     eval_assert("(push! [1 2 3] 4)", "[1 2 3 4]");
     eval_assert("(pop! [1 2 3 4])", "[1 2 3]");
+    // eval_assert("(make-vector 5)", "[#none #none #none #none #none]");
+    // eval_assert("(make-vector 5 33)", "[33 33 33 33 33]");
 }
 
 #[test]
@@ -80,6 +81,8 @@ fn test_vector_mutation() {
     // eval_assert("(pop! #[1 2 3])", "error");
 
     // TODO set-nth!, vector-fill!
+    // eval_assert("(let [(v [1 2 3 4])] (set-nth! v 3 8))", "[1 2 3 8]");
+    // eval_assert("(let [(v [1 2 3 4])] (fill! v 99))", "[99 99 99 99]");
 }
 
 #[test]

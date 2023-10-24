@@ -10,6 +10,17 @@ pub const RUSP_LIB_STD: &str = r#";; Derived Expressions ;;;;;;;;;;;;;;;;;;;;;;;
   [(let* [binding binding* ...] body body* ...)
    (let [binding] (let* [binding* ...] body body* ...))])
 
+;; This feels extra scuffed, using 0 for the dummy value, because #none would
+;; not work with the template and there is no undefined value.
+;
+; (macro-rules letrec* []
+;   [(letrec* [] body body* ...)
+;    (let [] body body* ...)]  
+;   [(letrec* [(name init) ...] body body* ...)
+;    (let [(name init) ...]
+;       (let* [(name init) ...]
+;         body body* ...))])
+
 (macro-rules and []
   [(and) #t]
   [(and test) test]
@@ -56,7 +67,9 @@ pub const RUSP_LIB_STD: &str = r#";; Derived Expressions ;;;;;;;;;;;;;;;;;;;;;;;
 
 (def inc (lambda [x] (+ x 1)))
 
-;; Vars ;;;;
+
+;; Vars ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO these could use some more specific error handling
 
 (def swap! (lambda [x v]
              (let [(a (deref x))]

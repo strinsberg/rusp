@@ -82,7 +82,9 @@ impl Vm {
                 // question is whether there is supposed to be a difference
                 // between (vector ...) and [...]
                 Val::Vector(v) => {
-                        let evalled = v.borrow().values()
+                    let evalled = v
+                        .borrow()
+                        .values()
                         .map(|val| self.eval(val.clone(), env.clone()))
                         .collect::<Result<Vec<Val>, Error>>()?;
                     if v.borrow().is_tuple() {
@@ -155,7 +157,7 @@ impl Vm {
 
     fn is_special_form(&self, s: Rc<Str>) -> bool {
         match s.to_string().as_str() {
-            "if" | "lambda" => true,
+            "if" | "lambda" | "macro-expand" => true,
             _ => false,
         }
     }
@@ -165,6 +167,7 @@ impl Vm {
             Some(ls) => match name {
                 "if" => self.eval_if(ls, env),
                 "lambda" => self.eval_lambda(ls, env),
+                "macro-expand" => self.eval_macro_expand(ls, env),
                 _ => panic!("not a special form: {name}"),
             },
             None => panic!("empty special form"),
@@ -200,6 +203,33 @@ impl Vm {
             }
         };
         Ok(Val::from(Closure::new(None, env, formals, list.tail())))
+    }
+
+    fn eval_macro_expand(&self, list: Rc<List>, env: Environ) -> Result<Val, Error> {
+        // got list = (expr)
+        // extract expr from the list
+        let expr = list.first().ok_or(Error::Arity("macro-expand"))?;
+        // get the macro at the start
+        // TODO gotta be a cleaner way to deal with this nested expr
+        match &expr {
+            // The expr must also be a list to be a macro application
+            Val::List(ls) => match ls.first() {
+                // The first element must be a symbol that is bound to a macro
+                // in the environment
+                Some(Val::Symbol(s)) => {
+                    match env.lookup(&s).ok_or(Error::ArgType(
+                        "macro-expand",
+                        "macro",
+                        expr.clone(),
+                    ))? {
+                        Val::Macro(m) => m.expand(expr, env),
+                        _ => Err(Error::ArgType("macro-expand", "macro", expr.clone())),
+                    }
+                }
+                _ => Err(Error::ArgType("macro-expand", "(macro expr)", expr.clone())),
+            },
+            _ => Err(Error::ArgType("macro-expand", "(macro expr)", expr.clone())),
+        }
     }
 
     fn formals_from_vector(&self, args: std::slice::Iter<'_, Val>) -> Result<Formals, Error> {

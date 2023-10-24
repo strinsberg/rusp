@@ -143,7 +143,16 @@ impl Template {
                         idx += 1;
                     }
                 }
-                _ => return Err(Error::TemplateElipseNotVar),
+                _ => {
+                    // TODO this will not work with things like letrec
+                    // where we do (var <literal>) ...
+                    // Or possibly even with (var val) ...
+                    // As mentioned in a number of places the macro needs to be
+                    // re-written so that it covers more cases properly.
+                    // println!("{:?}", t);
+                    // println!("{:?}", captures);
+                    return Err(Error::TemplateElipseNotVar);
+                }
             }
         };
 
