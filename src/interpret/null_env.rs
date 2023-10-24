@@ -24,7 +24,10 @@ pub fn null_env() -> Environ {
         new_proc("tuple?", procedures::vectors::is_tuple),
         new_proc("vector->tuple", procedures::vectors::vector_to_tuple),
         new_proc("tuple->vector", procedures::vectors::tuple_to_vector),
-        new_proc("vector-freeze!", procedures::vectors::vector_freeze),
+        new_proc("freeze!", procedures::vectors::freeze),
+        new_proc("make-vector", procedures::vectors::make_vector),
+        new_proc("set-nth!", procedures::vectors::set_nth),
+        new_proc("fill!", procedures::vectors::fill),
         // math/numbers
         new_proc("number?", procedures::math::is_number),
         new_proc("float?", procedures::math::is_float),
