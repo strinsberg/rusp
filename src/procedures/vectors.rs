@@ -3,7 +3,11 @@ use crate::data::{Error, Vector, Val};
 // Construction and Manipulation //
 
 pub fn vector(args: &[Val]) -> Result<Val, Error> {
-    Ok(Val::from(args.to_vec()))
+    Ok(Val::from(Vector::from(args.to_vec())))
+}
+
+pub fn tuple(args: &[Val]) -> Result<Val, Error> {
+    Ok(Val::from(Vector::tuple(args.to_vec())))
 }
 
 pub fn push(args: &[Val]) -> Result<Val, Error> {

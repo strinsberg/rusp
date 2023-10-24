@@ -17,6 +17,7 @@ pub fn null_env() -> Environ {
         new_proc("length", procedures::collections::length),
         // vectors
         new_proc("vector", procedures::vectors::vector),
+        new_proc("tuple", procedures::vectors::tuple),
         new_proc("push", procedures::vectors::push),
         new_proc("pop", procedures::vectors::pop),
         new_proc("vector?", procedures::vectors::is_vector),

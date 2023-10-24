@@ -3,8 +3,13 @@ use helpers::eval_assert;
 
 #[test]
 fn test_vector_construction() {
+    // TODO new-vector (or something like that)
     eval_assert("(vector 1 2 3 4)", "[1 2 3 4]");
+    eval_assert("(tuple 1 2 3 4)", "#[1 2 3 4]");
     eval_assert("[1 2 3 4]", "[1 2 3 4]");
+    eval_assert("#[1 2 3 4]", "#[1 2 3 4]");
+    eval_assert("[1 2 (= 1 2)]", "[1 2 #f]");
+    eval_assert("#[1 2 (= 1 2)]", "#[1 2 #f]");
     eval_assert("(push [1 2 3] 4)", "[1 2 3 4]");
     eval_assert("(pop [1 2 3 4])", "[1 2 3]");
 }
@@ -40,6 +45,23 @@ fn test_vector_access() {
 }
 
 #[test]
+fn test_tuple_access() {
+    // elementwise
+    eval_assert("(first #[1 2 3 4 5])", "1");
+    eval_assert("(second #[1 2 3 4 5])", "2");
+    eval_assert("(third #[1 2 3 4 5])", "3");
+    eval_assert("(fourth #[1 2 3 4 5])", "4");
+    eval_assert("(fifth #[1 2 3 4 5])", "5");
+    // by index
+    eval_assert("(nth 0 #[1 2 3 4 5])", "1");
+    eval_assert("(nth 1 #[1 2 3 4 5])", "2");
+    eval_assert("(nth 4 #[1 2 3 4 5])", "5");
+    // missing
+    eval_assert("(first #[])", "#none");
+    eval_assert("(nth 3 #[1])", "#none");
+}
+
+#[test]
 fn test_vector_mutation() {
     eval_assert("(let [(v [1 2 3 4])]
                    (push v 5)
@@ -49,12 +71,19 @@ fn test_vector_mutation() {
                    (pop v)
                    (= (length v) 3))",
                 "#t");
+    // TODO Uncomment when we have better errors
+    // eval_assert("(push #[1 2 3] 4)", "error");
+    // eval_assert("(pop #[1 2 3])", "error");
+
+    // TODO set-nth!, vector-fill!
 }
 
 #[test]
 fn test_vector_info() {
     eval_assert("(length [])", "0");
     eval_assert("(length [1 2 3 4])", "4");
+    eval_assert("(length #[])", "0");
+    eval_assert("(length #[1 2 3 4])", "4");
 }
 
 #[test]
@@ -75,6 +104,8 @@ fn test_vector_conversion() {
                     (vector-freeze v)
                     (tuple? v))",
                 "#t");
+
+    // TODO vector->list
 }
 
 
