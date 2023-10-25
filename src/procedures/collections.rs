@@ -48,3 +48,11 @@ pub fn length(args: &[Val]) -> Result<Val, Error> {
         _ => Err(Error::Arity("length")),
     }
 }
+
+// Many of these could be easily made if letrec and do/loop were finished
+// which need macros working better unless I want to do them in rust.
+// Put freeze and fill
+// make sure to include strings where applicable
+// concat, as a non-destructive merge for map. though maybe we need both types
+// for vector anyway.
+// map, filter, reduce, for-each
