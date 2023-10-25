@@ -1,10 +1,5 @@
 # Rusp
 
-Rusp is a lisp-like language that compiles to rust. This project holds the
-rust data structures and runtime elements that make this possible. The companion
-compiler is RuspCC and compiled projects use Rusp as a rust dependency when
-compiled but rust using cargo.
-
 The goal for now is to get a reasonable subset of functions and types finished.
 Something close to the r5rs scheme and some very common clojure functions to
 cover the differences in the languages. It is important to come up with at least
@@ -80,6 +75,15 @@ ideas and necessary todos here so I do not lose them.
      useful. But some kind of trait and implement system or enum system like
      rust has could be super nice too, though I would want to make sure my builtin
      types worked with it to.
+- [] Functions that can compile the internal structure to the rust structure
+     necessary to create the structure in rust without reading.
+- [] A scheme of compiling the basic structures straight to rust. Something that
+     is more rustlike than we had in the previous tests. Using var and a nicer
+     way to design a closure (tdb) should make it a lot better. I really do
+     want to scope it and not need an environment at runtime, which is mostly
+     necessary for closures, but if the bindings that are mutable are vars then
+     there is nothing but cloneing to do when capturing an environment, which
+     means that we do not have to do anything funny for creating closures.
 
 
 # Design

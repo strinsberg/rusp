@@ -47,8 +47,8 @@ impl StringReader {
             Token::ListOpen => self.read_list_literal(),
             Token::VecOpen => self.read_vector_val(),
             Token::TupleOpen => self.read_tuple_val(),
-            Token::MapOpen => self.read_map_val(),
-            Token::DictOpen => self.read_dict_val(),
+            Token::MapOpen => self.read_map("table"),
+            Token::DictOpen => self.read_map("dict"),
             Token::Deref => self.read_deref(),
             Token::None => Ok(Val::None),
             tk => Err(Error::BadToken(self.scanner.line, tk.to_string())),
@@ -106,36 +106,32 @@ impl StringReader {
         Ok(vec)
     }
 
-    fn read_map_val(&mut self) -> Result<Val, Error> {
-        let map = self.read_map()?;
-        Ok(Val::from(map))
-    }
-
-    fn read_dict_val(&mut self) -> Result<Val, Error> {
-        // #{ was used by the caller
-        let mut map = self.read_map()?;
-        map.freeze();
-        Ok(Val::from(map))
-    }
-
-    fn read_map(&mut self) -> Result<Map, Error> {
-        // { was used by the caller
-        let mut map = Map::new();
-
+    fn read_map(&mut self, kind: &str) -> Result<Val, Error> {
+        // { or #{ was used by the caller
+        let mut vals = vec![];
         loop {
-            let key = self.scanner.next()?;
-            if key == Token::MapClose {
-                break;
-            }
-
             let val = self.scanner.next()?;
-            if key == Token::MapClose {
-                return Err(Error::OddMapPairs(self.scanner.line));
+            if val == Token::MapClose {
+                break;
+            } else {
+                vals.push(self.read_helper(val)?);
             }
-
-            map.assoc(self.read_helper(key)?, self.read_helper(val)?)?;
         }
-        Ok(map)
+
+        if vals.len() == 0 {
+            let mut m = Map::new();
+            if kind == "dict" {
+                m.freeze()
+            }
+            Ok(Val::from(m))
+        } else {
+            Ok(Val::from(List::new(
+                Val::symbol(kind),
+                Some(Rc::new(
+                    List::from_vec(&vals).expect("vec should be covertable to list"),
+                )),
+            )))
+        }
     }
 
     // TODO could use this as a reference for how to make [] etc syntactic
@@ -221,13 +217,15 @@ mod tests {
     #[test]
     fn test_reading_maps() {
         // This testing method only allows us to use 1 entry as it is an unordered map
-        let expr = "{:a 2}";
+        let expr = "{:a 2 :b 3}";
+        let expect = "(table :a 2 :b 3)";
         let result = StringReader::new(expr).read().unwrap().to_string();
-        assert_eq!(result, expr);
+        assert_eq!(result, expect);
 
-        let expr = "#{:a 2}";
+        let expr = "#{:a 2 :b 3}";
+        let expect = "(dict :a 2 :b 3)";
         let result = StringReader::new(expr).read().unwrap().to_string();
-        assert_eq!(result, expr);
+        assert_eq!(result, expect);
     }
 
     #[test]

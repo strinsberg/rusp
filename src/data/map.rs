@@ -37,6 +37,38 @@ impl Map {
         Ok(map)
     }
 
+    pub fn map_from_vec(entries: &[Val]) -> Result<Map, Error> {
+        let mut map = Map {
+            mutable: true,
+            entries: HashMap::with_capacity(entries.len()),
+        };
+        map.add_pairs_from_vec(entries)?;
+        Ok(map)
+    }
+
+    pub fn add_pairs_from_vec(&mut self, vals: &[Val]) -> Result<(), Error> {
+        let mut iter = vals.iter();
+        loop {
+            let key = iter.next();
+            let val = iter.next();
+            match (key, val) {
+                (Some(k), Some(v)) => match self.assoc(k.clone(), v.clone()) {
+                    Ok(_) => (),
+                    Err(e) => return Err(e),
+                },
+                (Some(_), None) => return Err(Error::MapArgsNotEven(Val::from(vals.to_vec()))),
+                _ => break,
+            }
+        }
+        Ok(())
+    }
+
+    pub fn dict_from_vec(entries: &[Val]) -> Result<Map, Error> {
+        let mut map = Map::map_from_vec(entries)?;
+        map.mutable = false;
+        Ok(map)
+    }
+
     pub fn copy_to_map(map: Map) -> Map {
         let entries: Vec<(Val, Val)> = map.entries().map(|(k, v)| (k.clone(), v.clone())).collect();
         Map::map(&entries).unwrap()
@@ -87,6 +119,15 @@ impl Map {
         }
     }
 
+    pub fn clear(&mut self) -> Result<(), Error> {
+        if !self.mutable {
+            Err(Error::Immutable)
+        } else {
+            self.entries.clear();
+            Ok(())
+        }
+    }
+
     pub fn keys(&self) -> Vec<&Val> {
         self.entries.keys().collect()
     }
@@ -101,7 +142,7 @@ impl Map {
 
     // Information
 
-    pub fn is_tuple(&self) -> bool {
+    pub fn is_dict(&self) -> bool {
         !self.mutable
     }
 

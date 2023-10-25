@@ -71,16 +71,14 @@ impl Vm {
                     Val::Macro(m) => m.expand(expr, env.clone())?,
                     head => return Err(Error::NotAProcedure(head)),
                 },
-                // TODO do we really want to eval a vector when we see it? or
-                // do we want to eval vector literals when we see them only.
-                // Is it even possible to eval it twice without being explicit
-                // about it?
-                // The reader transforms #(1 2 3) -> (list 1 2 3) which is why
-                // those are evaluated properly. We could do that to ensure
-                // vector literals are evalled properly when seen in code, but that
-                // if encountered other ways are simply returned. I guess the
-                // question is whether there is supposed to be a difference
-                // between (vector ...) and [...]
+                // Unlike some other literals [] cannot be syntactic sugar for (vector ...)
+                // Because we expect vectors to be in the data when read as
+                // we use them for structure in forms like lambda. This means that
+                // we have to evaluate them when we see them in other places
+                // like we would any other form. If all forms they are used for
+                // as structure are special forms or macros this should be fine
+                // but I expect there will be times where vectors will end up
+                // being evaluated more than once, which will be a problem.
                 Val::Vector(v) => {
                     let evalled = v
                         .borrow()
@@ -93,7 +91,6 @@ impl Vm {
                         Val::from(Vector::from(evalled))
                     }
                 }
-                // TODO add an eval for map literals
                 Val::TailCall(_) | Val::Undefined => panic!("should not be evaluated: {expr}"),
                 _ => expr,
             };

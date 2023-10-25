@@ -29,6 +29,7 @@ pub enum Error {
     BadType(Val),
     ArgType(&'static str, &'static str, Val),
     DivideByZero,
+    MapArgsNotEven(Val),
     // TODO replace with a scan error
     CantParseNum(String),
     NotAProcedure(Val),

@@ -28,6 +28,16 @@ pub fn null_env() -> Environ {
         new_proc("make-vector", procedures::vectors::make_vector),
         new_proc("set-nth!", procedures::vectors::set_nth),
         new_proc("fill!", procedures::vectors::fill),
+        // maps
+        new_proc("table", procedures::maps::table),
+        new_proc("dict", procedures::maps::dict),
+        new_proc("table?", procedures::maps::is_table),
+        new_proc("dict?", procedures::maps::is_dict),
+        new_proc("get", procedures::maps::get),
+        new_proc("assoc!", procedures::maps::assoc),
+        new_proc("dissoc!", procedures::maps::dissoc),
+        new_proc("clear!", procedures::maps::clear),
+        new_proc("merge!", procedures::maps::merge),
         // math/numbers
         new_proc("number?", procedures::math::is_number),
         new_proc("float?", procedures::math::is_float),
