@@ -1,6 +1,8 @@
 # Rusp
 
-Rusp is a lisp/clojure like language. The interpreter is written in rust, though
+**Note** this is a project for fun and learning and is not intended for practical use. It is in a pretty early stage and I am planning a number of changes to syntax etc. A lot of the README is just notes to myself and ideas for design and features.
+
+Rusp (rust + lisp) is a lisp/clojure like language. The interpreter is written in rust, though
 realistically it could be in any language. The end goal will be to write a
 compiler that translates rusp code into rust so that it can be compiled into
 binaries that are not interpreted at all. As rusp is a dynamic language there
