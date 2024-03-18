@@ -2,6 +2,65 @@
 
 General notes, todos, etc. for the project and plans for other related projects.
 
+# New Ideas
+
+## Compiler
+The compiler is going to be written in clojure, with the hope that it can use a subset that is valid rusp code too. The ultimate goal is to transform the rusp code into something close to an assembly like code. Idealy some level of this will be easy to transform to rust. Perhaps there will be a middle level that can diverge to rust or to other targets. Otherwise for now I can just target it directly to rust, but it could be transformed to a really low level and then transformed from there back to rust.
+
+The result could look something like this
+```clojure
+(ns something)
+
+(def a 8)
+
+(cons 1.5 2/3)
+
+(let [a "hello"
+      b "world"]
+  (println (str a " " b)))
+```
+
+goes to something like
+
+```clojure
+(ns something)
+
+(val-assign a (val-int 8))
+
+(cons (val-float 1.5) (val-rational 2 3))
+
+(block-assign temp0)
+(val-assign a (val-string "hello"))
+(val-assign b (val-string "world"))
+(val-assign temp1 (val-string " "))
+(val-assign temp2 (vec! a temp1 b))
+(val-assign temp3 (apply str temp3))
+(tail-call temp3)
+(block-end)
+
+(end something)
+```
+
+There are a few things to note here:
+* A def or let variable assignment is just a rust let with whatever the val type is and a constructor for the value.
+* A let is just a nested block.
+* A block and namespace could be inside a list or as showed here with something to delimit the start and end
+* A builtin simple function call can just be the call, but a defined function will use apply.
+* We can simplify function calls a little by creating temp vars to hold the results of any expressions in the argument list. I am not sure if when compiled rust will optimize this and remove the intermediate variables. The rust code would just move those rather than clone them, so maybe. The value in this representation is that it gets closer to 3 address code and might be easier to optimize or to convert directly to things like LLVM if desired.
+* The block assign is to easily store the result of the computation inside the block in a variable outside the block. For a top level let like this I guess it is not actually necessary.
+* The tail-call is something that I can add to every tail expression, or only to those expressions that might have returned a tail-call object. Essentially, the tail part of every expression will be lazy if it is a function call. After it returns the result needs to be processed until there is no more tail calls. So, a recursive function would have a tail call that would be returned and then executed in a loop until the final value is obtained. This will eliminate stack use. However, given that we are adding a function call to every tail expression this will add some overhead. It is possible that we could use recur like clojure to indicate when to do this to the compiler, or do some analysis and identify which function we are in and only wrap things in tail calls when we return from this exact function. Using recur as a keyword might be good to indicate to the user that we are adding a tail call, but we would still need to store the name of the function to use in the tail call, so maybe it is not that helpful, unless we just transform the body into a loop with it and do not return the function at all. The only difficulty here is ensuring we are in tail position when transforming. I think for now just using tail-call everywhere is the easiest and we can optimize them away, but to do that might need to store some meta data in the calls. Obviously. since the let above is a top-level expression and we are not even returning the value for anything it does not need a tail call.
+
+## Organization
+The overall organization may change some if I write the compiler in clojure. The standard lib and rusp data structures will need to be setup with rust project structure if we want them to be compiled and testable. Ideally, the rust data will be in a single file and make it easy for us to either collect through an include/import in a cargo deps file or setup to be textually inserted as a module in the resulting compiled file. Probably both would be good. The compiler really should make it possible to compile a .rs file for use as a binary, i.e. rustc can just be called and compile it straight to a binary. But for larger projects, or me building standard libs in rusp and then compiling them to files that can be included or copied into those files. A rusp project should not require a single file and should after compiling be capable of being compiled with cargo to pull together a bunch of rusp libs.
+
+All of that to say that my project needs to separate the concerns a bit, and maybe to be organized as a rust project so that it could be included as a cargo dependency when desired, perhaps even for the interpreter, that could be split into a separate project, that might itself be compiled? The difficulty is that if the compiler is supposed to be a binary, hard since it is built with clojure sadly, unless we can compile it with grall, that it also needs to access the source code. I do not really know how to reconcile this inconsistency. I suppose that eventually the compiler can be compiled using the compiler and then it will no longer require clojure, only a copy of the rusp data file and the rusp stdlib which could perhaps be downloaded individually from git and used where needed.
+
+So, for now what we need to do is to have the rust project built as it would be for the lib. Then it should have a separate folder for the clojure source code that will run the compiler. We might have a separate folder for tests or not idk.
+
+
+# OLD
+As of March 17
+
 # Testing
 
 I am not happy doing the integration type testing in rust. It is very easy to

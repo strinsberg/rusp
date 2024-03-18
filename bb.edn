@@ -1,0 +1,7 @@
+{:paths ["src-clj" "test-clj"]
+ :tasks
+ {test {:doc "Run all tests" :task (do (run 'test:data) (run 'test:compiler))}
+  test:data {:doc "Run rusp data tests." :task (println "not implemented")}
+  test:compiler {:doc "Run compiler tests." :task (println "not implemented")}
+  compile {:doc "Compile one or more rusp files to a self contained rust file."
+           :task (println "not implemented")}}}
